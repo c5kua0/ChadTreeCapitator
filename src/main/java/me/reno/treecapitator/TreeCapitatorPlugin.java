@@ -16,33 +16,17 @@ public class TreeCapitatorPlugin extends JavaPlugin {
                 this
         );
 
+        TreeCommand chadCommand = new TreeCommand(chadItem);
+
         if (getCommand("chad") != null) {
-            getCommand("chad").setExecutor(
-                    new TreeCommand(chadItem)
-            );
+            getCommand("chad").setExecutor(chadCommand);
+            getCommand("chad").setTabCompleter(chadCommand);
         }
 
-        getLogger().info("TreeCapitator has been enabled!");
+        getLogger().info("TreeCapitator enabled!");
     }
 
     public TreeChadItem getChadItem() {
         return chadItem;
-    }
-} this);
-
-        ChadAxeCommand chadAxeCommand = new ChadAxeCommand(this);
-        getCommand("chadaxe").setExecutor(chadAxeCommand);
-        getCommand("chadaxe").setTabCompleter(chadAxeCommand);
-
-        getLogger().info("TreeCapitator enabled.");
-    }
-
-    @Override
-    public void onDisable() {
-        getLogger().info("TreeCapitator disabled.");
-    }
-
-    public static TreeCapitator getInstance() {
-        return instance;
     }
 }
