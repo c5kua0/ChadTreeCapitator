@@ -20,7 +20,6 @@ public class TreeCapitatorPlugin extends JavaPlugin {
 
         if (getCommand("chad") != null) {
             getCommand("chad").setExecutor(chadCommand);
-            getCommand("chad").setTabCompleter(chadCommand);
         }
 
         getLogger().info("TreeCapitator enabled!");
