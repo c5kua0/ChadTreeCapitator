@@ -6,6 +6,11 @@ public class TreeCapitatorPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        getCommand("chadaxe").setExecutor(
+                new ChadAxeCommand()
+        );
+
         getServer().getPluginManager().registerEvents(
                 new TreeListener(this),
                 this
