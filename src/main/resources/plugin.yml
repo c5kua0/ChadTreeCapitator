@@ -1,11 +1,17 @@
-name: TreeCapitator
-version: 1.0
-main: me.reno.treecapitator.TreeCapitatorPlugin
-api-version: '26.1'
-author: Reno
-description: Chad Tree Capitator
+name: ChadTreeCapitator
+version: '${version}'
+main: me.reno.treecapitator.TreeCapitator
+api-version: '1.21'
+author: reno
+description: Chop the whole tree at once with the Chad Axe.
 
 commands:
   chadaxe:
-    description: Gives you the Chad Axe
+    description: Gives you the Chad Axe.
     usage: /chadaxe
+    permission: treecapitator.give
+
+permissions:
+  treecapitator.give:
+    description: Allows giving yourself the Chad Axe.
+    default: op
