@@ -7,125 +7,121 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
-public class TreeChopListener implements Listener {
+public class TreeListener implements Listener {
 
-    private static final Set<Material> LOG_TYPES = logTypes();
-    private static final int MAX_BLOCKS = 128;
+    private final TreeCapitatorPlugin plugin;
+    private final TreeChadItem chadItem;
 
-    private final TreeCapitator plugin;
-
-    public TreeChopListener(TreeCapitator plugin) {
+    public TreeListener(
+            TreeCapitatorPlugin plugin,
+            TreeChadItem chadItem
+    ) {
         this.plugin = plugin;
+        this.chadItem = chadItem;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+
         Player player = event.getPlayer();
-        ItemStack tool = player.getInventory().getItemInMainHand();
+        Block start = event.getBlock();
 
-        if (!ChadAxeItem.isChadAxe(tool)) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        // Only Chad activates the ability
+        if (!chadItem.isChad(item)) {
             return;
         }
 
-        Block origin = event.getBlock();
-        if (!LOG_TYPES.contains(origin.getType())) {
+        // Only logs
+        if (!isLog(start.getType())) {
             return;
         }
 
-        List<Block> logs = findConnectedLogs(origin);
+        event.setCancelled(true);
 
-        int broken = 0;
-        for (Block log : logs) {
-            if (log.equals(origin)) {
-                continue;
-            }
-            log.breakNaturally(tool);
-            broken++;
-        }
+        Set<Block> treeLogs = findTree(start);
 
-        if (broken > 0) {
-            damageTool(player, tool, broken);
+        for (Block log : treeLogs) {
+
+            log.breakNaturally(item);
         }
     }
 
-    private List<Block> findConnectedLogs(Block origin) {
-        List<Block> result = new ArrayList<>();
-        Set<Block> visited = new HashSet<>();
-        Deque<Block> queue = new ArrayDeque<>();
+    private Set<Block> findTree(Block start) {
 
-        queue.add(origin);
-        visited.add(origin);
+        Set<Block> found = new HashSet<>();
+        Queue<Block> queue = new ArrayDeque<>();
 
-        while (!queue.isEmpty() && result.size() < MAX_BLOCKS) {
+        found.add(start);
+        queue.add(start);
+
+        /*
+         * Safety limit.
+         * Prevents accidentally destroying huge connected
+         * structures made from logs.
+         */
+        final int MAX_LOGS = 512;
+
+        while (!queue.isEmpty() && found.size() < MAX_LOGS) {
+
             Block current = queue.poll();
-            result.add(current);
 
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dz = -1; dz <= 1; dz++) {
-                        if (dx == 0 && dy == 0 && dz == 0) {
-                            continue;
-                        }
-                        Block neighbor = current.getRelative(dx, dy, dz);
-                        if (visited.contains(neighbor)) {
-                            continue;
-                        }
-                        if (LOG_TYPES.contains(neighbor.getType())) {
-                            visited.add(neighbor);
-                            queue.add(neighbor);
-                        }
-                    }
+            Block[] neighbors = {
+
+                    current.getRelative(1, 0, 0),
+                    current.getRelative(-1, 0, 0),
+
+                    current.getRelative(0, 1, 0),
+                    current.getRelative(0, -1, 0),
+
+                    current.getRelative(0, 0, 1),
+                    current.getRelative(0, 0, -1),
+
+                    current.getRelative(1, 1, 0),
+                    current.getRelative(-1, 1, 0),
+                    current.getRelative(1, -1, 0),
+                    current.getRelative(-1, -1, 0),
+
+                    current.getRelative(1, 0, 1),
+                    current.getRelative(-1, 0, 1),
+                    current.getRelative(1, 0, -1),
+                    current.getRelative(-1, 0, -1)
+            };
+
+            for (Block neighbor : neighbors) {
+
+                if (found.contains(neighbor)) {
+                    continue;
+                }
+
+                if (!isLog(neighbor.getType())) {
+                    continue;
+                }
+
+                found.add(neighbor);
+                queue.add(neighbor);
+
+                if (found.size() >= MAX_LOGS) {
+                    break;
                 }
             }
         }
 
-        return result;
+        return found;
     }
 
-    private void damageTool(Player player, ItemStack tool, int extraUses) {
-        if (!(tool.getItemMeta() instanceof Damageable damageable)) {
-            return;
-        }
-        if (damageable.isUnbreakable()) {
-            return;
-        }
+    private boolean isLog(Material material) {
 
-        int newDamage = damageable.getDamage() + extraUses;
-        int maxDurability = tool.getType().getMaxDurability();
+        String name = material.name();
 
-        if (newDamage >= maxDurability) {
-            player.getInventory().setItemInMainHand(null);
-            player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_ITEM_BREAK, 1f, 1f);
-            return;
-        }
-
-        damageable.setDamage(newDamage);
-        tool.setItemMeta((org.bukkit.inventory.meta.ItemMeta) damageable);
-    }
-
-    private static Set<Material> logTypes() {
-        return EnumSet.of(
-                Material.OAK_LOG,
-                Material.SPRUCE_LOG,
-                Material.BIRCH_LOG,
-                Material.JUNGLE_LOG,
-                Material.ACACIA_LOG,
-                Material.DARK_OAK_LOG,
-                Material.MANGROVE_LOG,
-                Material.CHERRY_LOG,
-                Material.PALE_OAK_LOG,
-                Material.CRIMSON_STEM,
-                Material.WARPED_STEM
-        );
+        return name.endsWith("_LOG")
+                || name.endsWith("_WOOD");
     }
 }
