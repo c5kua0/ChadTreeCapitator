@@ -4,3 +4,8 @@ main: me.reno.treecapitator.TreeCapitatorPlugin
 api-version: '26.1'
 author: Reno
 description: Chad Tree Capitator
+
+commands:
+  chadaxe:
+    description: Gives you the Chad Axe
+    usage: /chadaxe
