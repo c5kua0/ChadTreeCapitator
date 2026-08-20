@@ -1,29 +1,27 @@
 plugins {
-    java
+    id("java")
 }
 
 group = "me.reno"
-version = "1.0"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
-
-    maven {
-        name = "papermc"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-       compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 }
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-tasks {
-    compileJava {
-        options.encoding = "UTF-8"
+tasks.processResources {
+    val props = mapOf("version" to version)
+    inputs.properties(props)
+    filesMatching("plugin.yml") {
+        expand(props)
     }
 }
