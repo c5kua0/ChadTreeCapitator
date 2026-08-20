@@ -10,16 +10,16 @@ repositories {
         name = "papermc"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
-
-    mavenCentral()
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.5")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -27,13 +27,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 tasks.processResources {
-    val props = mapOf(
-        "version" to project.version
-    )
-
-    inputs.properties(props)
-
     filesMatching("plugin.yml") {
-        expand(props)
+        expand("version" to project.version)
     }
 }
