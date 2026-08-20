@@ -6,18 +6,12 @@ group = "me.reno"
 version = "1.0.0"
 
 repositories {
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "papermc"
-                url = uri("https://repo.papermc.io/repository/maven-public/")
-            }
-        }
-
-        filter {
-            includeGroup("io.papermc.paper")
-        }
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+
+    mavenCentral()
 }
 
 dependencies {
