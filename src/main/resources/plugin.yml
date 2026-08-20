@@ -14,4 +14,4 @@ commands:
 permissions:
   treecapitator.give:
     description: Allows giving yourself the Chad Axe.
-    default: op
+    default: true
