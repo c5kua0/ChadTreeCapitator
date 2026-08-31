@@ -1,14 +1,8 @@
-name: TreeCapitator
+name: ChadTreeCapitator
 version: '1.0.0'
 main: me.reno.treecapitator.TreeCapitatorPlugin
 api-version: '26.1.2'
 description: Chad Tree Capitator
-
-commands:
-  chad:
-    description: Gives the Chad Tree Capitator
-    usage: /chad
-    permission: treecapitator.chad
 
 permissions:
   treecapitator.chad:
