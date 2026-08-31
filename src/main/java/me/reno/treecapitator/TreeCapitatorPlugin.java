@@ -11,16 +11,13 @@ public class TreeCapitatorPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Create the Chad item
         chadItem = new TreeChadItem(this);
 
-        // Register tree-capitator listener
         getServer().getPluginManager().registerEvents(
                 new TreeListener(this, chadItem),
                 this
         );
 
-        // Register Chad crafting recipe
         registerChadRecipe();
 
         getLogger().info("TreeCapitator enabled!");
@@ -35,48 +32,6 @@ public class TreeCapitatorPlugin extends JavaPlugin {
                 chadItem.createChad()
         );
 
-        /*
-         * Recipe:
-         *
-         * E E
-         * E S
-         *   S
-         *
-         * E = Echo Shard
-         * S = Stick
-         */
-
-        recipe.shape(
-                "EE",
-                "ES",
-                " S"
-        );
-
-        recipe.setIngredient('E', Material.ECHO_SHARD);
-        recipe.setIngredient('S', Material.STICK);
-
-        getServer().addRecipe(recipe);
-    }
-
-    public TreeChadItem getChadItem() {
-        return chadItem;
-    }
-}
-        ShapedRecipe recipe = new ShapedRecipe(
-                recipeKey,
-                chadItem.createChad()
-        );
-
-        /*
-         * Recipe:
-         *
-         * E E
-         * E S
-         *   S
-         *
-         * E = Echo Shard
-         * S = Stick
-         */
         recipe.shape(
                 "EE",
                 "ES",
