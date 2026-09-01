@@ -17,7 +17,6 @@ public class TreeChadItem {
     }
 
     public ItemStack createChad() {
-
         ItemStack axe = new ItemStack(Material.GOLDEN_AXE);
 
         ItemMeta meta = axe.getItemMeta();
@@ -31,6 +30,7 @@ public class TreeChadItem {
 
         axe.setItemMeta(meta);
 
+        // Mark the item as Chad
         axe.editPersistentDataContainer(pdc ->
                 pdc.set(
                         chadKey,
@@ -44,17 +44,40 @@ public class TreeChadItem {
 
     public boolean isChad(ItemStack item) {
 
-        if (item == null) {
+        if (item == null || item.getType() != Material.GOLDEN_AXE) {
             return false;
         }
 
-        if (item.getType() != Material.GOLDEN_AXE) {
-            return false;
-        }
-
+        // Primary identification: persistent data
         Byte value = item.getPersistentDataContainer()
                 .get(chadKey, PersistentDataType.BYTE);
 
-        return value != null && value == (byte) 1;
+        if (value != null && value == (byte) 1) {
+            return true;
+        }
+
+        /*
+         * Backwards compatibility:
+         * Older Chad items may have lost their PDC data while
+         * being transferred through another system.
+         *
+         * Only accept an unbreakable Golden Axe named "Chad".
+         */
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null || !meta.isUnbreakable()) {
+            return false;
+        }
+
+        Component displayName = meta.displayName();
+
+        if (displayName == null) {
+            return false;
+        }
+
+        return displayName.equals(
+                Component.text("Chad")
+                        .color(NamedTextColor.GOLD)
+        );
     }
 }
