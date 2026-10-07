@@ -1,4 +1,4 @@
-name: Build TreeCapitator
+name: Build Plugin
 
 on:
   push:
@@ -14,20 +14,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Set up Java 25
         uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Build with Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Maven
+        run: mvn clean package
 
-      - name: Build plugin
-        run: gradle build
-
-      - name: Upload plugin JAR
+      - name: Upload Plugin
         uses: actions/upload-artifact@v4
         with:
-          name: TreeCapitator
-          path: build/libs/*.jar
+          name: ChadTreeCapitator
+          path: target/*.jar
