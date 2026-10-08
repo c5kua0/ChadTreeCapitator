@@ -36,14 +36,29 @@ public class TreeCapitatorPlugin extends JavaPlugin {
                 chadItem.createChad()
         );
 
+        /*
+         * Chad Recipe:
+         *
+         * E E E
+         * A G A
+         * N N N
+         *
+         * E = Echo Shard
+         * A = Amethyst Shard
+         * G = Golden Axe
+         * N = Netherite Scrap
+         */
+
         recipe.shape(
-                "EE",
-                "ES",
-                " S"
+                "EEE",
+                "AGA",
+                "NNN"
         );
 
         recipe.setIngredient('E', Material.ECHO_SHARD);
-        recipe.setIngredient('S', Material.STICK);
+        recipe.setIngredient('A', Material.AMETHYST_SHARD);
+        recipe.setIngredient('G', Material.GOLDEN_AXE);
+        recipe.setIngredient('N', Material.NETHERITE_SCRAP);
 
         getServer().addRecipe(recipe);
     }
@@ -70,7 +85,10 @@ public class TreeCapitatorPlugin extends JavaPlugin {
             ItemStack chadAxe = chadItem.createChad();
 
             player.getInventory().addItem(chadAxe);
-            player.sendMessage("§6§lCHAD §r§eYou received the Chad Tree Capitator!");
+
+            player.sendMessage(
+                    "§6§lCHAD §r§eYou received the Chad Tree Capitator!"
+            );
 
             return true;
         }
