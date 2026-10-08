@@ -13,4 +13,4 @@ commands:
 permissions:
   treecapitator.chad:
     description: Allows the player to use /chad
-    default: true
+    default: op
